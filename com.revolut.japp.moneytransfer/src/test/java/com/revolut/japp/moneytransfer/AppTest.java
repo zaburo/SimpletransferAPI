@@ -26,7 +26,7 @@ public class AppTest
     }
 
     @Test
-    public void testRetrieveAllAccounts() {
+    public void retrieveAllAccounts() {
         final int id = get("/api/accounts").then()
                 .assertThat()
                 .statusCode(200)
@@ -41,7 +41,7 @@ public class AppTest
     }
 
     @Test
-    public void testRetrieveOneAccountPass() {
+    public void successRetrieveOneAccount() {
         get("/api/accounts/0").then()
                 .assertThat()
                 .statusCode(200)
@@ -51,14 +51,14 @@ public class AppTest
     }
 
     @Test
-    public void testRetrieveOneAccountFail() {
+    public void failRetrieveOneAccount() {
         get("/api/accounts/999").then()
                 .assertThat()
                 .statusCode(404);
     }
 
     @Test
-    public void testAddAccountPass() {
+    public void successAddAccount() {
         given().body("{\n" +
                 "    \"name\": \"AAA\",\n" +
                 "    \"balance\": \"50000\",\n" +
@@ -72,7 +72,7 @@ public class AppTest
     }
 
     @Test
-    public void testAddAccountFail() {
+    public void failAddAccount() {
         given().body("{\n" +
                 "    \"name\": \"AAA\",\n" +
                 "    \"balance\": \"50000\",\n" +
@@ -86,7 +86,7 @@ public class AppTest
     }
 
     @Test
-    public void testUpdateAccountPass() {
+    public void successUpdateAccount() {
         given().body("{\n" +
                 "    \"balance\": \"50000\",\n" +
                 "    \"currency\": \"EUR\"\n" +
@@ -103,7 +103,7 @@ public class AppTest
     }
 
     @Test
-    public void testUpdateAccountFail() {
+    public void failUpdateAccount() {
         given().body("{\n" +
                 "    \"currency\": \"FEAQWFW\"\n" +
                 "}")
@@ -115,7 +115,7 @@ public class AppTest
     }
 
     @Test
-    public void testDeleteOneAccountPass() {
+    public void successDeleteOneAccount() {
         delete("/api/accounts/0").then()
                 .assertThat()
                 .statusCode(204);
@@ -125,14 +125,14 @@ public class AppTest
     }
 
     @Test
-    public void testDeleteOneAccountFail() {
+    public void failDeleteOneAccount() {
         delete("/api/accounts/999").then()
                 .assertThat()
                 .statusCode(404);
     }
 
     @Test
-    public void testRetrieveAllTransfers() {
+    public void retrieveAllTransfers() {
         final int id = get("/api/transfers").then()
                 .assertThat()
                 .statusCode(200)
@@ -150,7 +150,7 @@ public class AppTest
     }
 
     @Test
-    public void testRetrieveOneTransferPass() {
+    public void successRetrieveOneTransfer() {
         get("/api/transfers/0").then()
                 .assertThat()
                 .statusCode(200)
@@ -170,7 +170,7 @@ public class AppTest
     }
 
     @Test
-    public void testAddTransferPass() {
+    public void successAddTransfer() {
         given().body("{\n" +
                 "    \"fromAccountId\": \"1\",\n" +
                 "    \"toAccountId\": \"0\",\n" +
@@ -186,7 +186,7 @@ public class AppTest
     }
 
     @Test
-    public void testAddTransferFail() {
+    public void failAddTransfer() {
         given().body("{\n" +
                 "    \"fromAccountId\": \"1\",\n" +
                 "    \"toAccountId\": \"0\",\n" +
@@ -202,7 +202,7 @@ public class AppTest
     }
 
     @Test
-    public void testUpdateTransferPass() {
+    public void successUpdateTransfer() {
         put("api/transfers/0")
                 .then()
                 .assertThat()
@@ -210,7 +210,7 @@ public class AppTest
     }
 
     @Test
-    public void testUpdateTransferFail() {
+    public void failUpdateTransfer() {
         put("api/transfers/1")
                 .then()
                 .assertThat()
