@@ -20,11 +20,12 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 
+import org.apache.log4j.*;
 public class App extends AbstractVerticle {
 
     private final Map<Integer, Account> accounts = new LinkedHashMap<>();
     private final Map<Integer, Transfer> transfers = new LinkedHashMap<>();
-
+    private static Logger log = Logger.getLogger(App.class);
 
     public static void main(final String[] args) {
         Launcher.executeCommand("run", App.class.getName());
@@ -63,10 +64,12 @@ public class App extends AbstractVerticle {
                 .createHttpServer()
                 .requestHandler(router::accept)
                 .listen(
-                        4444,
+                        8080,
                         result -> {
                             if (result.succeeded()) {
+                            	log.info("done");
                                 temp.complete();
+                                
                             } else {
                                 temp.fail(result.cause());
                             }
@@ -78,6 +81,7 @@ public class App extends AbstractVerticle {
         routingContext.response()
                 .putHeader("content-type", "application/json; charset=utf-8")
                 .end(Json.encodePrettily(accounts.values()));
+
     }
 
     private void getAccount(RoutingContext routingContext) {
@@ -85,8 +89,8 @@ public class App extends AbstractVerticle {
         if (id == null) {
             routingContext.response().setStatusCode(400).end();
         } else {
-            final Integer userId = Integer.valueOf(id);
-            Account account = accounts.get(userId);
+            final Integer idInt = Integer.valueOf(id);
+            Account account = accounts.get(idInt);
             if (account == null) {
                 routingContext.response().setStatusCode(404).end();
             } else {
@@ -101,7 +105,7 @@ public class App extends AbstractVerticle {
         try {
             final Account account = Json.decodeValue(routingContext.getBodyAsString(),
                     Account.class);
-            accounts.put(account.getUserId(), account);
+            accounts.put(account.getId(), account);
             routingContext.response()
                     .setStatusCode(201)
                     .putHeader("content-type", "application/json; charset=utf-8")
@@ -112,12 +116,12 @@ public class App extends AbstractVerticle {
     }
 
     private void updateAccount(RoutingContext routingContext) {
-        final String userId = routingContext.request().getParam("id");
+        final String id = routingContext.request().getParam("id");
         JsonObject json = routingContext.getBodyAsJson();
         if (id == null || json == null) {
             routingContext.response().setStatusCode(400).end();
         } else {
-            final Integer user = Integer.valueOf(userId);
+            final Integer user = Integer.valueOf(id);
             Account account = accounts.get(user);
             if (account == null) {
                 routingContext.response().setStatusCode(404).end();
@@ -151,13 +155,13 @@ public class App extends AbstractVerticle {
     }
 
     private void deleteAccount(RoutingContext routingContext) {
-        String userId = routingContext.request().getParam("id");
-        if (userId == null) {
+        String id = routingContext.request().getParam("id");
+        if (id == null) {
             routingContext.response().setStatusCode(400).end();
-        } else if (accounts.get(Integer.valueOf(userId)) == null) {
+        } else if (accounts.get(Integer.valueOf(id)) == null) {
             routingContext.response().setStatusCode(404).end();
         } else {
-            Integer user = Integer.valueOf(userId);
+            Integer user = Integer.valueOf(id);
             accounts.remove(user);
             routingContext.response().setStatusCode(204).end();
         }
@@ -170,11 +174,11 @@ public class App extends AbstractVerticle {
     }
 
     private void getTransfer(RoutingContext routingContext) {
-        final String userId = routingContext.request().getParam("id");
-        if (userId == null) {
+        final String id = routingContext.request().getParam("id");
+        if (id == null) {
             routingContext.response().setStatusCode(400).end();
         } else {
-            final Integer user = Integer.valueOf(userId);
+            final Integer user = Integer.valueOf(id);
             Transfer transfer = transfers.get(user);
             if (transfer == null) {
                 routingContext.response().setStatusCode(404).end();
@@ -190,7 +194,7 @@ public class App extends AbstractVerticle {
         try {
             final Transfer transfer = Json.decodeValue(routingContext.getBodyAsString(),
                     Transfer.class);
-            transfers.put(transfer.getTransactionId(), transfer);
+            transfers.put(transfer.getId(), transfer);
             routingContext.response()
                     .setStatusCode(201)
                     .putHeader("content-type", "application/json; charset=utf-8")
@@ -201,11 +205,11 @@ public class App extends AbstractVerticle {
     }
 
     private void updateTransfer(RoutingContext routingContext) {
-        final String userId = routingContext.request().getParam("id");
-        if (userId == null) {
+        final String id = routingContext.request().getParam("id");
+        if (id == null) {
             routingContext.response().setStatusCode(400).end();
         } else {
-            final Integer user = Integer.valueOf(userId);
+            final Integer user = Integer.valueOf(id);
             Transfer transfer = transfers.get(user);
             if (transfer == null) {
                 routingContext.response().setStatusCode(404).end();
@@ -234,17 +238,18 @@ public class App extends AbstractVerticle {
 
     private void initiateAccount() {
         Account account1 = new Account("Yuanwen", new BigDecimal("1111"), Currency.getInstance("EUR"));
-        accounts.put(account1.getUserId(), account1);
+        accounts.put(account1.getId(), account1);
+        log.info("[warm]: "+ account1.getId());
         Account account2 = new Account("Bach", new BigDecimal("234"), Currency.getInstance("EUR"));
-        accounts.put(account2.getUserId(), account2);
+        accounts.put(account2.getId(), account2);
         Account account3 = new Account("Caesar", new BigDecimal("10000"), Currency.getInstance("GBP"));
-        accounts.put(account3.getUserId(), account3);
+        accounts.put(account3.getId(), account3);
         Transfer trans1 = new Transfer(0, 1, new BigDecimal("650"), Currency.getInstance("EUR"), "Rent");
-        transfers.put(trans1.getTransactionId(), trans1);
+        transfers.put(trans1.getId(), trans1);
         Transfer trans2 = new Transfer(1, 2, new BigDecimal("200"), Currency.getInstance("USD"), "Gift");
-        transfers.put(trans2.getTransactionId(), trans2);
+        transfers.put(trans2.getId(), trans2);
         Transfer trans3 = new Transfer(1, 0, new BigDecimal("100"), Currency.getInstance("EUR"), "Shopping");
-        transfers.put(trans3.getTransactionId(), trans3);
+        transfers.put(trans3.getId(), trans3);
     }
 
 }

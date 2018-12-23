@@ -8,7 +8,7 @@ public class Transfer {
 	
 	private static final AtomicInteger COUNTER	= new AtomicInteger();
 	
-	private final int transactionId;
+	private final int id;
 	
 	private int fromAccountId;
 	
@@ -27,7 +27,7 @@ public class Transfer {
 	private TransferStatus status;
 	
 	public Transfer(int fromAccountId, int toAccountId, BigDecimal amount, Currency currency, String comment) {
-        this.transactionId = COUNTER.getAndIncrement();
+        this.id = COUNTER.getAndIncrement();
         this.fromAccountId = fromAccountId;
         this.toAccountId = toAccountId;
         this.amount = amount;
@@ -37,15 +37,15 @@ public class Transfer {
     }
 	
 	public Transfer() {
-		this.transactionId = COUNTER.getAndIncrement();
+		this.id = COUNTER.getAndIncrement();
 		this.status = TransferStatus.PENDING;
 	}
 
 	/**
-	 * @return the transactionId
+	 * @return the id
 	 */
-	public int getTransactionId() {
-		return transactionId;
+	public int getId() {
+		return id;
 	}
 
 

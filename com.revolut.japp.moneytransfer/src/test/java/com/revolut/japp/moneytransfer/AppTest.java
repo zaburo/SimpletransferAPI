@@ -6,6 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.ValidatableResponse;
 
 import static org.hamcrest.Matchers.equalTo;
 
@@ -17,12 +18,19 @@ public class AppTest
     @BeforeClass
     public static void configureRestAssured() {
         RestAssured.baseURI = "http://localhost";
-        RestAssured.port = 4444;
+        RestAssured.port = 8080;
     }
 
     @AfterClass
     public static void unconfigureRestAssured() {
         RestAssured.reset();
+    }
+    
+    @Test
+    public void testInitiateAccount() {
+    	String aaaid = "find { it.balance !=null }.id";
+		final int id = get("/api/accounts").then().assertThat().statusCode(200).extract()
+                .jsonPath().getInt(aaaid);
     }
 
     @Test
@@ -36,7 +44,7 @@ public class AppTest
                 .assertThat()
                 .statusCode(200)
                 .body("id", equalTo(id))
-                .body("name", equalTo("Yuanwen Li"))
+                .body("name", equalTo("Yuanwen"))
                 .body("currency", equalTo("EUR"));
     }
 
@@ -46,7 +54,7 @@ public class AppTest
                 .assertThat()
                 .statusCode(200)
                 .body("id", equalTo(0))
-                .body("name", equalTo("Yuanwen Li"))
+                .body("name", equalTo("Yuanwen"))
                 .body("currency", equalTo("EUR"));
     }
 
@@ -96,8 +104,8 @@ public class AppTest
                 .then()
                 .assertThat()
                 .statusCode(200)
-                .body("id", equalTo(0))
-                .body("name", equalTo("YUANWEN LI"))
+                .body("userId", equalTo(0))
+                .body("name", equalTo("Yuanwen"))
                 .body("balance", equalTo(50000))
                 .body("currency", equalTo("EUR"));
     }
@@ -108,7 +116,7 @@ public class AppTest
                 "    \"currency\": \"FEAQWFW\"\n" +
                 "}")
                 .when()
-                .put("api/accounts/0")
+                .put("api/accounts/1")
                 .then()
                 .assertThat()
                 .statusCode(400);
@@ -116,10 +124,10 @@ public class AppTest
 
     @Test
     public void successDeleteOneAccount() {
-        delete("/api/accounts/0").then()
+        delete("/api/accounts/1").then()
                 .assertThat()
                 .statusCode(204);
-        get("/api/accounts/0").then()
+        get("/api/accounts/1").then()
                 .assertThat()
                 .statusCode(404);
     }
@@ -203,7 +211,7 @@ public class AppTest
 
     @Test
     public void successUpdateTransfer() {
-        put("api/transfers/0")
+        put("api/transfers/1")
                 .then()
                 .assertThat()
                 .body("status", equalTo("SUCCEED"));
@@ -211,7 +219,7 @@ public class AppTest
 
     @Test
     public void failUpdateTransfer() {
-        put("api/transfers/1")
+        put("api/transfers/0")
                 .then()
                 .assertThat()
                 .body("status", equalTo("FAILED"));

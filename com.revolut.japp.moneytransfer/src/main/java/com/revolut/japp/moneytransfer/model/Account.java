@@ -8,7 +8,7 @@ public class Account {
 	
 	private static final AtomicInteger COUNTER = new AtomicInteger();
 	
-	private final int userId;
+	private final int id;
 	
 	private String userName;
 	
@@ -19,7 +19,7 @@ public class Account {
 	
 	
 	public Account(String userName, BigDecimal balance, Currency currency) {
-		this.userId = COUNTER.getAndIncrement();
+		this.id = COUNTER.getAndIncrement();
 		this.setUserName(userName);
 		this.setBalance(balance);
 		this.setCurrency(currency);
@@ -27,14 +27,14 @@ public class Account {
 	}
 	
 	public Account() {
-		this.userId = COUNTER.getAndIncrement();
+		this.id = COUNTER.getAndIncrement();
 	}
 	
 	/**
-	 * @return the userId
+	 * @return the id
 	 */
-	public int getUserId() {
-		return userId;
+	public int getId() {
+		return id;
 	}
 	
 
@@ -89,12 +89,12 @@ public class Account {
 		}
 		Account account = (Account)o;
 		
-		return userId == account.userId;
+		return id == account.id;
 	}
 	
 	public String toString() {
 		return "Account{" +
-				"id=" + userId + ", balance=" + balance + ", name='" + userName + '\'' +
+				"id=" + id + ", balance=" + balance + ", name='" + userName + '\'' +
 				", currency=" + currency + '}';
 		
 	}
