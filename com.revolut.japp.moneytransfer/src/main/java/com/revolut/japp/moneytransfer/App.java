@@ -31,7 +31,7 @@ public class App extends AbstractVerticle {
     }
 
     @Override
-    public void start(Future<Void> fut) {
+    public void start(Future<Void> temp) {
 
         initiateAccount();
 
@@ -66,9 +66,9 @@ public class App extends AbstractVerticle {
                         4444,
                         result -> {
                             if (result.succeeded()) {
-                                fut.complete();
+                                temp.complete();
                             } else {
-                                fut.fail(result.cause());
+                                temp.fail(result.cause());
                             }
                         }
                 );
@@ -85,8 +85,8 @@ public class App extends AbstractVerticle {
         if (id == null) {
             routingContext.response().setStatusCode(400).end();
         } else {
-            final Integer idAsInteger = Integer.valueOf(id);
-            Account account = accounts.get(idAsInteger);
+            final Integer userId = Integer.valueOf(id);
+            Account account = accounts.get(userId);
             if (account == null) {
                 routingContext.response().setStatusCode(404).end();
             } else {
@@ -112,13 +112,13 @@ public class App extends AbstractVerticle {
     }
 
     private void updateAccount(RoutingContext routingContext) {
-        final String id = routingContext.request().getParam("id");
+        final String userId = routingContext.request().getParam("id");
         JsonObject json = routingContext.getBodyAsJson();
         if (id == null || json == null) {
             routingContext.response().setStatusCode(400).end();
         } else {
-            final Integer userId = Integer.valueOf(id);
-            Account account = accounts.get(userId);
+            final Integer user = Integer.valueOf(userId);
+            Account account = accounts.get(user);
             if (account == null) {
                 routingContext.response().setStatusCode(404).end();
             } else {
@@ -157,8 +157,8 @@ public class App extends AbstractVerticle {
         } else if (accounts.get(Integer.valueOf(userId)) == null) {
             routingContext.response().setStatusCode(404).end();
         } else {
-            Integer idAsInteger = Integer.valueOf(userId);
-            accounts.remove(idAsInteger);
+            Integer user = Integer.valueOf(userId);
+            accounts.remove(user);
             routingContext.response().setStatusCode(204).end();
         }
     }
@@ -170,12 +170,12 @@ public class App extends AbstractVerticle {
     }
 
     private void getTransfer(RoutingContext routingContext) {
-        final String id = routingContext.request().getParam("id");
-        if (id == null) {
+        final String userId = routingContext.request().getParam("id");
+        if (userId == null) {
             routingContext.response().setStatusCode(400).end();
         } else {
-            final Integer idAsInteger = Integer.valueOf(id);
-            Transfer transfer = transfers.get(idAsInteger);
+            final Integer user = Integer.valueOf(userId);
+            Transfer transfer = transfers.get(user);
             if (transfer == null) {
                 routingContext.response().setStatusCode(404).end();
             } else {
@@ -201,12 +201,12 @@ public class App extends AbstractVerticle {
     }
 
     private void updateTransfer(RoutingContext routingContext) {
-        final String id = routingContext.request().getParam("id");
-        if (id == null) {
+        final String userId = routingContext.request().getParam("id");
+        if (userId == null) {
             routingContext.response().setStatusCode(400).end();
         } else {
-            final Integer idAsInteger = Integer.valueOf(id);
-            Transfer transfer = transfers.get(idAsInteger);
+            final Integer user = Integer.valueOf(userId);
+            Transfer transfer = transfers.get(user);
             if (transfer == null) {
                 routingContext.response().setStatusCode(404).end();
             } else {
@@ -235,16 +235,16 @@ public class App extends AbstractVerticle {
     private void initiateAccount() {
         Account account1 = new Account("Yuanwen", new BigDecimal("1111"), Currency.getInstance("EUR"));
         accounts.put(account1.getUserId(), account1);
-        Account account2 = new Account("Bill Doe", new BigDecimal("234"), Currency.getInstance("EUR"));
+        Account account2 = new Account("Bach", new BigDecimal("234"), Currency.getInstance("EUR"));
         accounts.put(account2.getUserId(), account2);
-        Account account3 = new Account("John Smith", new BigDecimal("10000"), Currency.getInstance("GBP"));
+        Account account3 = new Account("Caesar", new BigDecimal("10000"), Currency.getInstance("GBP"));
         accounts.put(account3.getUserId(), account3);
         Transfer trans1 = new Transfer(0, 1, new BigDecimal("650"), Currency.getInstance("EUR"), "Rent");
         transfers.put(trans1.getTransactionId(), trans1);
-        Transfer trans2 = new Transfer(1, 2, new BigDecimal("200"), Currency.getInstance("USD"), "Happy birthday");
+        Transfer trans2 = new Transfer(1, 2, new BigDecimal("200"), Currency.getInstance("USD"), "Gift");
         transfers.put(trans2.getTransactionId(), trans2);
-        Transfer trans3 = new Transfer(1, 0, new BigDecimal("100"), Currency.getInstance("EUR"), "Groceries");
-        transfers.put(trans2.getTransactionId(), trans2);
+        Transfer trans3 = new Transfer(1, 0, new BigDecimal("100"), Currency.getInstance("EUR"), "Shopping");
+        transfers.put(trans3.getTransactionId(), trans3);
     }
 
 }
